@@ -51,7 +51,9 @@
 
         <div class="col-lg-3" style="margin-top: 90px">
 
-            <a class="js-open-all-products list-group-item" href="#" >All products</a>
+            <div class="list-group-item" data-category-number="1">
+                <a class="js-category-open" href="#" >All products</a>
+            </div>
             <div class="list-group" id="categories">
                 <a href="#" class="list-group-item">Category 1</a>
                 <a href="#" class="list-group-item">Category 2</a>
@@ -93,35 +95,34 @@
 <div class="testModal" id="cartModal" tabindex="-1">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <span style="display:inline-block">Shopping Cart</span>
-                <button type="button" class="close js-close" style="display:inline-block">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="column-labels">
-                <label class="product-image">Image</label>
-                <label class="product-details">Product</label>
-                <label class="product-price">Price</label>
-                <label class="product-quantity">Quantity</label>
-                <label class="product-removal">Remove</label>
-                <label class="product-line-price">Total</label>
-            </div>
-            <div class="modal-body">
-                <div class="content"></div>
-                <form action="categoriesList.js" method="post" id="local-storage-form">
-                    <label for="name">Name:</label>
-                    <input type="text" name="name" id="name">
+            <form class="js-cart" action="http://nit.tron.net.ua/api/order/add" method="POST">
+                <div class="modal-header">
+                    <span style="display:inline-block">Shopping Cart</span>
+                    <button type="button" class="close js-close js-close--form" style="display:inline-block">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul class="cart__list js-cart__list">
 
-                    <label for="phone-number">Phone number:</label>
-                    <input type="text" name="phone-number" id="phone-number">
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <div class="container">
+                        <input type="text" hidden name='token' value="6zWDpPQKRIa8lJhacE6a">
+                        <label for="name">Name:</label>
+                        <input type="text" name="name" id="name" placeholder="HTML/CSS" required>
 
-                    <label for="email-address">Email Address:</label>
-                    <input type="text" name="email-address" id="email-address">
+                        <label for="phone-number">Phone number:</label>
+                        <input type="tel" name="phone" id="phone-number" pattern="+380[0-9]{9}" placeholder="+380770770777" required>
 
-                    <input type="submit" value="Place order">
-                </form>
-            </div>
+                        <label for="email-address">Email Address:</label>
+                        <input type="email" name="email" id="email-address" placeholder="test@test.com" required>
+
+                        <input type="submit" value="Place order">
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>

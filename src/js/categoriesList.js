@@ -3,6 +3,7 @@ import connectCart from './cart';
 
 connectCart();
 $(document).ready(function () {
+    // build nav menu
     $.ajax({
         type: "GET",
         url: "http://nit.tron.net.ua/api/category/list",
@@ -29,12 +30,14 @@ $(document).ready(function () {
             }
         }
     }).done(function () {
-        console.log("done")
         buildCategory('.js-category-open');
-        showAllProducts('.js-open-all-products');
-    })
-    getCategory(1);
+        // showAllProducts('.js-open-all-products');
+    });
+    // show all products
+    getCategory();
 
+
+    // build category list (nav menu)
     function buildCategoryList(arr) {
         let temp = [];
         let workArray = arr;
@@ -46,54 +49,32 @@ $(document).ready(function () {
         $('#categories').html(temp.join(""));
     }
 
+    // build category products
     function buildCategory(openEl) {
         $(openEl).on('click', function (e) {
             e.preventDefault();
             let id = $(this).parents('.list-group-item').attr('data-category-number');
-            getCategory(id);
+            if (id == 1) {
+                getCategory()
+            } else {
+                getCategory(id);
+            }
         });
     }
 
-    function showAllProducts(openEl) {
-        $(openEl).on('click', function (e) {
-            e.preventDefault();
-            $.ajax({
-                type: "GET",
-                url: `http://nit.tron.net.ua/api/product/list`,
-                success: function (data) {
-                    console.dir(data);
-                    buildProducts(data);
-                },
-                error: function (jqXHR, exception) {
-                    var msg = '';
-                    if (jqXHR.status === 0) {
-                        msg = 'Not connect.\n Verify Network.';
-                    } else if (jqXHR.status == 404) {
-                        msg = 'Requested page not found. [404]';
-                    } else if (jqXHR.status == 500) {
-                        msg = 'Internal Server Error [500].';
-                    } else if (exception === 'parsererror') {
-                        msg = 'Requested JSON parse failed.';
-                    } else if (exception === 'timeout') {
-                        msg = 'Time out error.';
-                    } else if (exception === 'abort') {
-                        msg = 'Ajax request aborted.';
-                    } else {
-                        msg = 'Uncaught Error.\n' + jqXHR.responseText;
-                    }
-                    $('#post').html(`<div style='font-size: 32px; font-weight: 600; text-align: center;'>${msg}</div><div style='font-size: 28px; font-weight: 600; text-align: center'>Try again later</div>`);
-                }
-            }).done(function () {
-            })
-        })
-    }
 
+    // get data from category and build products
     function getCategory(id) {
+        var url;
+        if (id) {
+            url = `http://nit.tron.net.ua/api/product/list/category/${id}`;
+        } else {
+            url = `http://nit.tron.net.ua/api/product/list`;
+        }
         $.ajax({
             type: "GET",
-            url: `http://nit.tron.net.ua/api/product/list/category/${id}`,
+            url: url,
             success: function (data) {
-                console.dir(data);
                 buildProducts(data);
             },
             error: function (jqXHR, exception) {
@@ -116,11 +97,15 @@ $(document).ready(function () {
                 $('#post').html(`<div style='font-size: 32px; font-weight: 600; text-align: center;'>${msg}</div><div style='font-size: 28px; font-weight: 600; text-align: center'>Try again later</div>`);
             }
         }).done(function () {
+            console.log('getCa');
             showPopUp('.js-product-open', '.js-close');
             showCartWindow('.js-cart-open', '.js-close');
+            initAddButton();
         })
     }
 
+
+    // show modal window
     function showPopUp(openEl, closeEl) {
         $(openEl).on('click', function (e) {
             e.preventDefault();
@@ -131,21 +116,20 @@ $(document).ready(function () {
         closeWindows('#productModal', '.js-close');
     }
 
+    // close modal window
     function closeWindows(windowToClose, closeEl) {
-        console.log(closeEl);
         $(closeEl).on('click', function (e) {
-            console.log($(this));
             e.preventDefault();
             $(windowToClose).removeClass('isActive');
         })
     }
 
+    // get product in modal
     function getProduct(id) {
         $.ajax({
             type: "GET",
             url: `http://nit.tron.net.ua/api/product/${id}`,
             success: function (data) {
-                console.dir(data);
                 // buildCategory(data);
                 $('.js-modal-body').html(
                     `<div class="modal-content">
@@ -200,10 +184,10 @@ $(document).ready(function () {
             }
         }).done(function () {
             showCartWindow('.js-cart-open', '.js-close');
-            //addToCart();
         })
     }
 
+    // build product in products list
     function buildProducts(arr) {
         let temp = [];
         let workArray = arr;
@@ -212,15 +196,18 @@ $(document).ready(function () {
 
             temp.push(`<div class="col-lg-4 col-md-6 mb-4">
             <div data-product-id="${workArray[i]['id']}" class="card js-card h-100">
-            <a class="js-product-open" href="#"><img class="card-img-top"  src="${workArray[i]['image_url']}" alt=""></a>
+            <a class="js-product-open" href="#">
+                <img class="card-img-top js-card-img" data-card-img="${workArray[i]['image_url']}" src="${workArray[i]['image_url']}" alt="">
+            </a>
             <div class="card-body">
-                <h4 class="card-title">
-                <a class="js-product-open" href="#">${workArray[i]['name']}</a>
+                <h4 class="card-title js-card-title" data-card-name="${workArray[i]['name']}">
+                    <a class="js-product-open" href="#">${workArray[i]['name']}</a>
                 </h4>
-                <h5>${workArray[i]['price']}</h5>
-                <p class="card-text">${workArray[i]['description']}</p>
-                 <div class="btn-ground js-cart-open js-add-to-cart">
-                                <button type="button" class="btn btn-primary js-cart-open js-add-to-cart"><span class="glyphicon glyphicon-shopping-cart js-cart-open js-add-to-cart"></span> Add To Cart</button>
+                <div class="card-price js-card-price" data-card-price="${workArray[i]['price']}">${workArray[i]['price']}</div>
+                <p class="card-text js-card-text" data-card-text="${workArray[i]['description']}">${workArray[i]['description']}</p>
+                 <div class="btn-ground js-cart-open">
+                            <button type="button" class="btn btn-primary js-cart-open js-add-to-cart">
+                                <span class="glyphicon glyphicon-shopping-cart js-cart-open"></span> Add To Cart</button>
                             </div>
             </div>
             </div>
@@ -240,70 +227,166 @@ $(document).ready(function () {
         });
         closeWindows('#cartModal', '.js-close');
     }
-    // function addToCart() {
-    //     $(".js-cart-open").on('click', function (e) {
-    //         let array = JSON.parse(sessionStorage.getItem("myProducts"));
-    //         array = array == null ? [] : array;
-    //         let id = $(this).attr("data-product-id");
-    //         if (alreadyExists(array, id)) return;
-    //         array.push(id);
-    //         sessionStorage.setItem("myProducts", JSON.stringify(array));
-    //         e.preventDefault();
-    //     });
-    // }
-    // function alreadyExists(array, id) {
-    //     for (let i = 0; i < array.length; i++) {
-    //         if (array[i] === id) return true;
-    //     }
-    //     return false;
-    // }
-    function postRequest() {
-        if (localStorage.formValues) {
-            console.log("localStorage.formValues: " + localStorage.formValues);
-            postForm($("#local-storage-form").attr('action'), localStorage.formValues);
-            localStorage.removeItem("formValues");
-        }
-        $("#local-storage-form").submit(function (event) {
-            event.preventDefault();
 
-            let formValues = $(this).serialize();
-            let url = $(this).attr('action');
-            postForm(url, formValues);
+    function initAddButton() {
+        $('.js-add-to-cart').on('click', function (el) {
+            var item = $(this).parents('.js-card');
+            addProductToCart(item);
+            buildCart();
+            changeQvalue();
+            updateCart();
         });
-    };
+    }
 
-    function postForm(url, formValues) {
-        if (navigator.onLine) {
-            $.post(url, formValues, function (data) {
-                console.log("Success: " + data);
-            });
+
+    function addProductToCart(el) {
+        // double call
+        var currentArr;
+        var addedProducts = localStorage.getItem('addedProducts');
+        if (!addedProducts) {
+            currentArr = [];
+            var prodId = $(el).attr('data-product-id');
+            var productName = $(el).find(".js-card-title").attr('data-card-name');
+            var productPrice = $(el).find(".js-card-price").attr('data-card-price');
+            var productImg = $(el).find(".js-card-img").attr('data-card-img');
+            var product = {
+                id: prodId,
+                name: productName,
+                price: productPrice,
+                img: productImg,
+                quantity: 1
+            }
+            currentArr.push(product);
+            console.log(currentArr);
+            localStorage.setItem('addedProducts', JSON.stringify(currentArr));
         } else {
-            console.log("Offline");
-            if (typeof (Storage) !== "undefined") {
-                localStorage.formValues = formValues;
+            console.log('Added products');
+            currentArr = JSON.parse(addedProducts);
+            var prodId = $(el).attr('data-product-id');
+            var check;
+            var ind;
+            // check if this product is in the basket
+            currentArr.forEach(function (el, i) {
+                if (el.id == prodId) {
+                    check = true;
+                    ind = i;
+                }
+            });
+
+            if (check) {
+                currentArr[ind].quantity += 1;
+                localStorage.setItem('addedProducts', JSON.stringify(currentArr));
+            } else {
+                var prodId = $(el).attr('data-product-id');
+                var productName = $(el).find(".js-card-title").attr('data-card-name');
+                var productPrice = $(el).find(".js-card-price").attr('data-card-price');
+                var productImg = $(el).find(".js-card-img").attr('data-card-img');
+                var product = {
+                    id: prodId,
+                    name: productName,
+                    price: productPrice,
+                    img: productImg,
+                    quantity: 1
+                }
+                currentArr.push(product);
+                localStorage.setItem('addedProducts', JSON.stringify(currentArr));
             }
         }
     }
-})
+
+    function buildCart() {
+        let temp = [];
+        let workArray = JSON.parse(localStorage.getItem('addedProducts'));
+        workArray.forEach(function (el) {
+            temp.push(`
+                     <li class="cart__item" data-product-id="${el.id}">
+                        <img class="cart__item__img" data-card-img="${el.img}" src="${el.img}" alt="${el.name}">
+                        <input type="text" name="ID-${el.id}" hidden>
+                        <div class="cart__item__info">
+                            <div class="cart__item__name" data-card-name="${el.name}">${el.name}</div>
+                            <div class="cart__item__price js-cart__item__price" data-card-price="${el.price}">${el.price}</div>
+                        </div>
+                        <div class="cart__quantity">
+                            <input type="number" name="products[${el.id}]" id="${el.id}" class="cart__item__quantity" value="${el.quantity}" hidden>
+                            <div class="cart__quantity__minus">-</div>
+                            <div class="cart__quantity__blanc" data-card-quantity="${el.quantity}">${el.quantity}</div>
+                            <div class="cart__quantity__plus">+</div>
+                        </div>
+                        <div class="cart__item__total js-cart__item__total">${el.price * el.quantity}</div>
+                    </li>
+                `);
+        });
+        $('.js-cart__list').html(temp.join(""));
+    }
+
+    function changeQvalue() {
+        $('.cart__quantity__minus').on('click', function() {
+            var blanc = $(this).parents('.cart__quantity').find('.cart__quantity__blanc');
+            var input = $(this).parents('.cart__quantity').find('.cart__item__quantity');
+            var value = Number(input.val());
+            var price = Number( $(this).parents('.cart__item').find('.js-cart__item__price').text() );
+            var total = $(this).parents('.cart__item').find('.js-cart__item__total');
+            value -= 1;
+
+            if(value > 0) {
+                blanc.text(value);
+                blanc.attr('data-card-quantity', value);
+                input.val(value);
+                total.text(price * value).fadeIn(300);
+            } else {
+                $(this).parents('.cart__item').remove();
+            }
+        });
+
+        $('.cart__quantity__plus').on('click', function() {
+            var blanc = $(this).parents('.cart__quantity').find('.cart__quantity__blanc');
+            var input = $(this).parents('.cart__quantity').find('.cart__item__quantity');
+            var value = Number(input.val());
+            var price = Number( $(this).parents('.cart__item').find('.js-cart__item__price').text() );
+            var total = $(this).parents('.cart__item').find('.js-cart__item__total');
+
+            value += 1;
+
+            if(value > 0) {
+                blanc.text(value);
+                blanc.attr('data-card-quantity', value);
+                input.val(value);
+                total.text(price * value).fadeIn(300);
+            }
+        });
+    }
+
+    function  updateCart() {
+        $('.js-close--form').on('click', function() {
+            console.log("CLICK");
+            var addedProducts = localStorage.getItem('addedProducts');
+            var workArr = $(this).parents(".js-cart").find(".cart__item");
+            var tempArr = [];
+
+            if (!addedProducts || !workArr.length) {
+                return;
+            }
 
 
-// function buildProductsForCategory(arr) {
-//     let temp = [];
-//     let workArray = arr;
-//     for (let i = 0; i < workArray.length; i++) {
-//         temp.push(`<div class="col-lg-4 col-md-6 mb-4">
-//             <div data-product-id="${workArray[i]['id']}" class="card js-card h-100">
-//             <a class="js-product-open" href="#"><img class="card-img-top"  src="${workArray[i]['image_url']}" alt=""></a>
-//             <div class="card-body">
-//                 <h4 class="card-title">
-//                 <a class="js-product-open" href="#">${workArray[i]['name']}</a>
-//                 </h4>
-//                 <h5>${workArray[i]['price']}</h5>
-//                 <p class="card-text">${workArray[i]['description']}</p>
-//             </div>
-//             </div>
-//         </div>`);
-//     }
-//     $('#category-products').html(temp.join(""));
-// }
+            for (var i = 0; i < workArr.length; i++ ) {
+                var el = workArr[i];
+                var prodId = $(el).attr('data-product-id');
+                var productName = $(el).find(".cart__item__name").attr('data-card-name');
+                var productPrice = $(el).find(".cart__item__price").attr('data-card-price');
+                var productImg = $(el).find(".cart__item__img").attr('data-card-img');
+                var productQuantity =  Number($(el).find(".cart__quantity__blanc").attr('data-card-quantity'));
+                var product = {
+                    id: prodId,
+                    name: productName,
+                    price: productPrice,
+                    img: productImg,
+                    quantity: productQuantity
+                };
+                tempArr.push(product);
+            }
 
+            localStorage.setItem('addedProducts', JSON.stringify(tempArr));
+        });
+    }
+
+});

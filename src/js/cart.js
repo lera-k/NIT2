@@ -4,8 +4,7 @@ export default function () {
     // console.error("HELLO!!!");
     $(document).ready(function () {
         let productArray = [];
-        console.error("HELLO!!!");
-        $('.js-cart-open').on('click', function (e) {
+        $('.js-add-to-cart').on('click', function (e) {
             console.log('Click worked');
             e.preventDefault();
             console.log('Item added ');
@@ -17,6 +16,7 @@ export default function () {
                 "special price": $(this).attr('special_price'),
                 "quantity": ""
             };
+            console.dir(productJSON);
             if (localStorage.getObj('product') != null) {
                 productArray = localStorage.getObj('product');
                 productArray.push(productJSON);
