@@ -1,7 +1,141 @@
-$test: red;
-.body{
-  color:$test;
+.testModal  {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  opacity: 1;
+  display: none;
+  background: rgba(100, 100, 200, 0.3);
+  transition: all 0.5s linear;
+  padding-top: 30px;
+  &.isActive {
+    display: block;
+    opacity: 1;
+  }
 }
-p{
-  color:red;
+#all-products{
+    padding-top: 40px;
+}
+.cart-button{
+  position: absolute;
+  right: 0px;
+}
+label,
+input {
+  display: block;
+}
+input {
+  margin-bottom: 10px;
+}
+.column-labels {
+  label {
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+  }
+  .product-image { float: left; width: 20%; }
+  .product-details { float: left; width: 37%; }
+  .product-price { float: left; width: 12%; }
+  .product-quantity { float: left; width: 10%; }
+  .product-removal { float: left; width: 9%; }
+  .product-line-price { float: left; text-align: right; }
+  .product-image, .product-details, .product-removal {
+    text-indent: -9999px;
+  }}
+.group:before,
+.group:after {
+  content: '';
+  display: table;
+}
+.group:after {
+  clear: both;
+}
+.group {
+  zoom: 1;
+}
+
+
+/* Apply clearfix in a few places */
+.shopping-cart, .column-labels, .product, .totals-item {
+  @extend .group;
+}
+.product {
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  .product-image {
+    text-align: center;
+    img {
+      width: 100px;
+    }
+  }
+
+  .product-details {
+    .product-title {
+      margin-right: 20px;
+
+    }
+    .product-description {
+      margin: 5px 20px 5px 0;
+      line-height: 1.4em;
+    }
+  }
+
+  .product-quantity {
+    input {
+      width: 40px;
+
+    }
+  }
+  .remove-product {
+    border: 0;
+    padding: 4px 8px;
+    background-color: #c66;
+    color: #fff;
+    font-size: 12px;
+    border-radius: 3px;
+  }
+
+  .remove-product:hover {
+    background-color: #a44;
+  }
+}
+
+
+/* Totals section */
+.totals {
+  .totals-item {
+    float: right;
+    clear: both;
+    width: 100%;
+    margin-bottom: 10px;
+
+    //label {
+    //  float: left;
+    //  clear: both;
+    //  width: 79%;
+    //  text-align: right;
+    //}
+
+    .totals-value {
+      float: right;
+      width: 21%;
+      text-align: right;
+    }
+  }
+}
+
+.checkout {
+  float: right;
+  border: 0;
+  margin-top: 20px;
+  padding: 6px 25px;
+  background-color: #6b6;
+  color: #fff;
+  font-size: 25px;
+  border-radius: 3px;
+}
+
+.checkout:hover {
+  background-color: #494;
 }

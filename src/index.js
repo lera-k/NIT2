@@ -1,3 +1,7 @@
+import './css/bootstrap/bootstrap.css';
 import './scss/main.scss';
-console.log('Hello!');
-console.log(`The time is ${new Date()}`);
+import'bootstrap';
+import './js/categoriesList.js';
+// import './js/allProducts.js';
+// import './js/product.js';
+import './js/cartOld.js';
