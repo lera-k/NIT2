@@ -7412,3 +7412,13 @@ input {
     line-height: 30px;
     text-align: center; }
 
+.product_content p {
+  height: 200px;
+  overflow-y: auto; }
+
+.hideCost {
+  visibility: hidden !important; }
+
+.crossPrice {
+  text-decoration: line-through red; }
+
